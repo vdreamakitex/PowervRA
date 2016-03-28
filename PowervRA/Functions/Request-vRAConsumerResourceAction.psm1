@@ -21,7 +21,7 @@
 
     .EXAMPLE
     $ResourceActionId = (Get-vRAConsumerResource -Name vm01 | Get-vRAConsumerResourceAction "Reboot").id
-    $ResourceActionId | Request-vRAConsumerResourceAction -ResourceName vm01
+    Request-vRAConsumerResourceAction -Id $ResourceActionId -ResourceName vm01
 
     .EXAMPLE
     Request-vRAConsumerResourceAction -Id 6a301f8c-d868-4908-8348-80ad0eb35b00 -ResourceId 20402e93-fb1d-4bd9-8a51-b809fbb946fd
@@ -30,89 +30,130 @@
     Request-vRAConsumerResourceAction -Id 6a301f8c-d868-4908-8348-80ad0eb35b00 -ResourceName vm01
 
     .EXAMPLE
-    Get-vRAConsumerResource -Name vm01 | Request-vRAConsumerResourceAction -Id 6a301f8c-d868-4908-8348-80ad0eb35b00
-    
+
+    $JSON = @"
+        {
+            "type":  "com.vmware.vcac.catalog.domain.request.CatalogResourceRequest",
+            "resourceId":  "448fcd09-b8c0-482c-abbc-b3ab818c2e31",
+            "actionId":  "fae08c75-3506-40f6-9c9b-35966fe9125c",
+            "description":  null,
+            "data":  {
+                         "description":  null,
+                         "reasons":  null
+                     }
+        }        
+    "@
+
+    $JSON | Request-vRAConsumerResourceAction
 
 #>
 [CmdletBinding(DefaultParameterSetName="Standard")]
 
     Param (
 
-    [parameter(Mandatory=$true,ValueFromPipeline=$true)]
+    [parameter(Mandatory=$true, ParameterSetName="Standard")]
+    [parameter(ParameterSetName="ByResourceName")]
     [ValidateNotNullOrEmpty()]
-    [alias("ResourceActionId")]
     [String]$Id,
    
-    [parameter(Mandatory=$true, ValueFromPipelineByPropertyName, ParameterSetName="Standard")]
+    [parameter(Mandatory=$true, ParameterSetName="Standard")]
     [ValidateNotNullOrEmpty()]
-    [String[]]$ResourceId,         
+    [String]$ResourceId,         
 
-    [parameter(Mandatory=$true, ParameterSetName="ByName")]
+    [parameter(Mandatory=$true, ParameterSetName="ByResourceName")]
     [ValidateNotNullOrEmpty()]
-    [String[]]$ResourceName       
-
+    [String]$ResourceName,
+    
+    [parameter(Mandatory=$true, ValueFromPipeline=$true, ParameterSetName="JSON")]
+    [ValidateNotNullOrEmpty()]
+    [String]$JSON
+           
     )
+
+    begin {
+
+    }
+
+    process {
                 
- try {
+         try {
 
-        if ($PSBoundParameters.ContainsKey("ResourceName")) {
-               
-            # --- Get resource by name
+            switch ($PsCmdlet.ParameterSetName) {
 
-            foreach ($Name in $ResourceName) {
+                'JSON' {
 
-                Write-verbose -Message "Retrieving Id for resource $($Name)"
-                
-                $Resource = Get-vRAConsumerResource -Name $Name
+                    # --- Extract id's from json payload
+                    $Body = $JSON | ConvertFrom-Json
+                    $ResourceId = $Body.resourceId
+                    $ActionId = $Body.actionId
 
-                # --- Build a list of resource ids
-                $ResourceId += $Resource.ResourceId
-                                
+                    break
+
+                }
+
+                'ByResourceName' {
+
+                    # --- Get the resource id
+                    Write-verbose -Message "Retrieving Id for resource $($Name)"
+                    $Resource = Get-vRAConsumerResource -Name $ResourceName
+                    $ResourceId = $Resource.ResourceId
+                    $ActionId = $Id
+
+                    break
+
+                }
+
+                'Standard' {
+
+                    # --- Set Id param to ActionId
+                    $ActionId = $Id
+
+                    break
+                }
+
             }
 
-        }
+            # --- Try to retrieve the resource action for the resource
 
-        foreach ($Item in $ResourceId) {
+            $Action = Get-vRAConsumerResourceAction -Id $ActionId -ResourceId $ResourceId
 
-            # --- Try to retrieve the resource action for each resource
-            $Action = Get-vRAConsumerResourceAction -Id $Id -ResourceId $Item
+            Write-Verbose "Found resourceAction $($Action.Name) for resource $($ResourceId)" 
 
-            Write-Verbose "Found resourceAction $($Action.Name) for resource $($Item)"                       
+            if (!$PSBoundParameters.ContainsKey("JSON")) {
 
-            # --- Get the request template
+                # --- Get the request template
 
-            Write-Verbose -Message "Retrieving request template"
+                Write-Verbose -Message "Retrieving request template"
 
-            $URI = "/catalog-service/api/consumer/resources/$($Item)/actions/$($Action.id)/requests/template"
+                $JSON = Get-vRAConsumerResourceActionRequestTemplate -Id $ActionId -ResourceId $ResourceId         
 
-            Write-Verbose -Message "Preparing GET to $($URI)"
-       
-            $Template = Invoke-vRARestMethod -Method GET -URI $URI
+            }
 
             Write-Verbose "SUCCESS"
 
             # --- Execute the request     
         
-            if ($PSCmdlet.ShouldProcess($Item)){
+            if ($PSCmdlet.ShouldProcess($ResourceId)){
                 
                 # --- Build the URI string for the service         
             
-                $URI = "/catalog-service/api/consumer/resources/$($Item)/actions/$($Action.id)/requests"
+                $URI = "/catalog-service/api/consumer/resources/$($ResourceId)/actions/$($ActionId)/requests"
                 
                 Write-Verbose -Message "Preparing POST to $($URI)"                
            
-                $Response = Invoke-vRARestMethod -Method POST -URI $URI -Body ($Template | ConvertTo-Json -Depth 10 -Compress)
+                $Response = Invoke-vRARestMethod -Method POST -URI $URI -Body ($JSON)
 
                 Write-Verbose "SUCCESS"
                      
             }
 
         }
+        catch [Exception]{
 
-    }
-    catch [Exception]{
+            throw
+    
+        }
 
-        throw
-    }
+    }       
 
 }

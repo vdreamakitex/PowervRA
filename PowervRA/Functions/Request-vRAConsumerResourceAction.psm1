@@ -47,7 +47,7 @@
     $JSON | Request-vRAConsumerResourceAction
 
 #>
-[CmdletBinding(DefaultParameterSetName="Standard")]
+[CmdletBinding(SupportsShouldProcess,ConfirmImpact="Low",DefaultParameterSetName="Standard")][OutputType('System.Management.Automation.PSObject')]
 
     Param (
 
@@ -141,7 +141,7 @@
                 
                 Write-Verbose -Message "Preparing POST to $($URI)"                
            
-                $Response = Invoke-vRARestMethod -Method POST -URI $URI -Body ($JSON)
+                Invoke-vRARestMethod -Method POST -URI $URI -Body $JSON | Out-Null
 
                 Write-Verbose "SUCCESS"
                      

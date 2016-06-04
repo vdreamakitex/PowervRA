@@ -5,7 +5,7 @@
 Remove a vRA Principal from a Tenant Role
 
 ## SYNTAX
- Remove-vRAPrincipalFromTenantRole [-TenantId] <String> [-PrincipalId] <String[]> [-RoleId] <String> [-WhatIf] [-Confirm] [<CommonParameters>]    
+ Remove-vRAPrincipalFromTenantRole [-TenantId] <String> [-PrincipalId] <String[]> [-RoleId] <String> [-WhatIf]  [-Confirm] [<CommonParameters>]    
 
 ## DESCRIPTION
 
@@ -69,7 +69,8 @@ System.Management.Automation.PSObject.
 ```
 -------------------------- EXAMPLE 1 --------------------------
 
-C:\PS>Remove-vRAPrincipalFromTenantRole -TenantId Tenant01 -PrincipalId Tenantadmin@vrademo.local -RoleId CSP_TENANT_ADMIN
+PS C:\>Remove-vRAPrincipalFromTenantRole -TenantId Tenant01 -PrincipalId Tenantadmin@vrademo.local -RoleId 
+CSP_TENANT_ADMIN
 
 
 
@@ -79,6 +80,7 @@ C:\PS>Remove-vRAPrincipalFromTenantRole -TenantId Tenant01 -PrincipalId Tenantad
 
 -------------------------- EXAMPLE 2 --------------------------
 
-C:\PS>Get-vRAUserPrincipal -UserName Tenantadmin@vrademo.local | Remove-vRAPrincipalFromTenantRole -TenantId Tenant01 -RoleId CSP_TENANT_ADMIN
+PS C:\>Get-vRAUserPrincipal -UserName Tenantadmin@vrademo.local | Remove-vRAPrincipalFromTenantRole -TenantId Tenant01 
+-RoleId CSP_TENANT_ADMIN
 ```
 

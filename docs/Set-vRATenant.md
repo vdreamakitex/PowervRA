@@ -5,7 +5,7 @@
 Update a vRA Tenant
 
 ## SYNTAX
- Set-vRATenant -Name <String> [-Description <String>] [-ContactEmail <String>] -ID <String> [-WhatIf] [-Confirm] [<CommonParameters>] Set-vRATenant -JSON <String> [-WhatIf] [-Confirm] [<CommonParameters>]    
+ Set-vRATenant -Name <String> [-Description <String>] [-ContactEmail <String>] -ID <String> [-WhatIf] [-Confirm]  [<CommonParameters>] Set-vRATenant -JSON <String> [-WhatIf] [-Confirm] [<CommonParameters>]    
 
 ## DESCRIPTION
 
@@ -87,7 +87,7 @@ System.Management.Automation.PSObject
 ```
 -------------------------- EXAMPLE 1 --------------------------
 
-C:\PS>Set-vRATenant -Name Tenant01 -Description "This is the updated description" -ID Tenant01
+PS C:\>Set-vRATenant -Name Tenant01 -Description "This is the updated description" -ID Tenant01
 
 
 
@@ -97,7 +97,7 @@ C:\PS>Set-vRATenant -Name Tenant01 -Description "This is the updated description
 
 -------------------------- EXAMPLE 2 --------------------------
 
-C:\PS>$JSON = @"
+PS C:\>$JSON = @"
 
 
 {

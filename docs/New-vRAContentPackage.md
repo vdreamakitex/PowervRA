@@ -5,7 +5,7 @@
 Create a vRA Content Package
 
 ## SYNTAX
- New-vRAContentPackage -Name <String> [-Description <String>] -BlueprintId <String[]> [-WhatIf] [-Confirm] [<CommonParameters>] New-vRAContentPackage -Name <String> [-Description <String>] -BlueprintName <String[]> [-WhatIf] [-Confirm] [<CommonParameters>] New-vRAContentPackage [-Description <String>] -JSON <String> [-WhatIf] [-Confirm] [<CommonParameters>]    
+ New-vRAContentPackage -Name <String> [-Description <String>] -BlueprintId <String[]> [-WhatIf] [-Confirm]  [<CommonParameters>] New-vRAContentPackage -Name <String> [-Description <String>] -BlueprintName <String[]> [-WhatIf] [-Confirm]  [<CommonParameters>] New-vRAContentPackage [-Description <String>] -JSON <String> [-WhatIf] [-Confirm] [<CommonParameters>]    
 
 ## DESCRIPTION
 
@@ -87,7 +87,7 @@ System.Management.Automation.PSObject
 ```
 -------------------------- EXAMPLE 1 --------------------------
 
-C:\PS>New-vRAContentPackage -Name ContentPackage01 -Description "This is Content Package 01" -BlueprintId 
+PS C:\>New-vRAContentPackage -Name ContentPackage01 -Description "This is Content Package 01" -BlueprintId 
 "58e10956-172a-48f6-9373-932f99eab37a","0c74b085-dbc1-4fea-9cbf-a1601f668a1f"
 
 
@@ -98,7 +98,8 @@ C:\PS>New-vRAContentPackage -Name ContentPackage01 -Description "This is Content
 
 -------------------------- EXAMPLE 2 --------------------------
 
-C:\PS>New-vRAContentPackage -Name ContentPackage01 -Description "This is Content Package 01" -BlueprintName "Blueprint01","Blueprint02"
+PS C:\>New-vRAContentPackage -Name ContentPackage01 -Description "This is Content Package 01" -BlueprintName 
+"Blueprint01","Blueprint02"
 
 
 
@@ -108,7 +109,7 @@ C:\PS>New-vRAContentPackage -Name ContentPackage01 -Description "This is Content
 
 -------------------------- EXAMPLE 3 --------------------------
 
-C:\PS>$JSON = @"
+PS C:\>$JSON = @"
 
 
 {

@@ -5,12 +5,12 @@
 * There must be enough information to help the end user use your cmdlet but not too much
 * Help text must appear after the function declaration. E.g. 'function Get-Something {'
 * Help text should contain the following sections:
-* SYNOPSIS
-* DESCRIPTION
-* PARAMETER (For each input parameter that your cmdlet takes)
-* INPUTS
-* OUTPUTS
-* EXAMPLE
+    * SYNOPSIS
+    * DESCRIPTION
+    * PARAMETER (For each input parameter that your cmdlet takes)
+    * INPUTS
+    * OUTPUTS
+    * EXAMPLE
 
 ### Example
 
@@ -98,8 +98,8 @@ $Array | Get-Something
 ## Pipeline support
 * To support pipeline processing your code should be wrapped between **begin {}** , **process {}** and **end {}** blocks
 * The parameters that you want to accept input from the pipeline should also be tagged with the appropriate properties
-* ValueFromPipeline
-* ValueFromPipelineByPropertyName
+    * ValueFromPipeline
+    * ValueFromPipelineByPropertyName
 * Pipeline support for a parameter must be enabled in each ParameterSet that it is a member of
 
 ```
